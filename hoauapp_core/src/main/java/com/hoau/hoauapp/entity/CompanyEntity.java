@@ -8,7 +8,7 @@ import java.io.Serializable;
  */
 public class CompanyEntity implements Serializable{
 	/**
-	 * 公司编号
+	 * 公司编号.....
 	 */
 	private String companyCode;
 	/**
