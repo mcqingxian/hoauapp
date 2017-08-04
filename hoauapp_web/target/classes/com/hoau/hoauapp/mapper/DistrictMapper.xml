@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+	"-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hoau.hoauapp.mapper.DistrictMapper">
+
+	<select id="queryProvince"  
+		resultType="com.hoau.hoauapp.vo.DistrictInfo">
+		<![CDATA[
+			SELECT
+			    id,
+			    district_code       AS districtCode,
+			    district_name       AS districtName,
+			    parent_id           AS districtParentId,
+			    district_name_short AS districtShortName,
+			    CASE
+			        WHEN (
+			                SELECT
+			                    COUNT(1)
+			                FROM
+			                    t_app_district
+			                WHERE
+			                    t_app_district.parent_id = a.id) > 0
+			        THEN '1'
+			        ELSE '0'
+			    END AS hasChild
+			FROM
+			    t_app_district a
+			WHERE
+			    district_type = 'PLACE_PROVINCE'
+		]]>
+	</select>
+	
+	<select id="queryCityByProvince"  parameterType="string"
+		resultType="com.hoau.hoauapp.vo.DistrictInfo">
+		<![CDATA[
+			SELECT
+			    A.id,
+			    A.district_code        AS districtCode,
+			    A.district_name        AS districtName,
+			    A.parent_id            AS districtParentId,
+			    A. district_name_short AS districtShortName,
+			    CASE
+			        WHEN (
+			                SELECT
+			                    COUNT(1)
+			                FROM
+			                    t_app_district
+			                WHERE
+			                    t_app_district.parent_id = a.id) > 0
+			        THEN '1'
+			        ELSE '0'
+			    END AS hasChild
+			FROM
+			    t_app_district a
+			INNER JOIN
+			    t_app_district b
+			ON
+			    a.parent_id = b.id
+			WHERE
+			    B.district_name = #{province,jdbcType=VARCHAR} and b.district_type = 'PLACE_PROVINCE'
+		]]>
+	</select>
+	<select id="queryDistrictByCity"  parameterType="string"
+		resultType="com.hoau.hoauapp.vo.DistrictInfo">
+		<![CDATA[
+			SELECT
+			    A.id,
+			    A.district_code        AS districtCode,
+			    A.district_name        AS districtName,
+			    A.parent_id            AS districtParentId,
+			    A. district_name_short AS districtShortName,
+			    CASE
+			        WHEN (
+			                SELECT
+			                    COUNT(1)
+			                FROM
+			                    t_app_district
+			                WHERE
+			                    t_app_district.parent_id = a.id) > 0
+			        THEN '1'
+			        ELSE '0'
+			    END AS hasChild
+			FROM
+			    t_app_district a
+			INNER JOIN
+			    t_app_district b
+			ON
+			    a.parent_id = b.id
+			WHERE
+			    B.district_name = #{city,jdbcType=VARCHAR} and b.district_type = 'PLACE_CITY'
+		]]>
+	</select>
+	
+	<resultMap type="com.hoau.hoauapp.vo.HotCityInfo" id="hotCityInfoMap">  
+		<id property = "id" column = "id" jdbcType="VARCHAR"/>
+		<result property="districtCode" column="district_code" jdbcType="VARCHAR"/>
+		<result property="districtName" column="district_name" jdbcType="VARCHAR"/>
+		<result property="districtParentId" column="parent_id" jdbcType="VARCHAR"/>
+		<result property="districtShortName" column="district_name_short" jdbcType="VARCHAR"/>
+		<result property="hasChild" column="hasChild" jdbcType="VARCHAR"/>
+		<association property="province" column="districtParentId"  select="getProvince"/>
+	</resultMap>
+	<select id="queryHotCityInfo" resultMap="hotCityInfoMap">
+	    <![CDATA[
+	    	SELECT
+			    d.id,
+			    d.district_code        AS districtCode,
+			    d.district_name        AS districtName,
+			    d.parent_id            AS districtParentId,
+			    d. district_name_short AS districtShortName,
+			    CASE
+			        WHEN (
+			                SELECT
+			                    COUNT(1)
+			                FROM
+			                    t_app_district
+			                WHERE
+			                    t_app_district.parent_id = d.id) > 0
+			        THEN '1'
+			        ELSE '0'
+			    END AS hasChild
+			FROM
+			    t_app_hot_city a
+			INNER JOIN
+			    t_app_district d
+			ON
+			    a.city_name = d.district_name
+			AND d.district_type = 'PLACE_CITY'
+	    ]]>
+	</select>
+	<select id="getProvince" parameterType="string" resultType="com.hoau.hoauapp.vo.DistrictInfo">
+		<![CDATA[	
+			SELECT
+			    id,
+			    district_code       AS districtCode,
+			    district_name       AS districtName,
+			    parent_id           AS districtParentId,
+			    district_name_short AS districtShortName,
+			    CASE
+			        WHEN (
+			                SELECT
+			                    COUNT(1)
+			                FROM
+			                    t_app_district
+			                WHERE
+			                    t_app_district.parent_id = a.id) > 0
+			        THEN '1'
+			        ELSE '0'
+			    END AS hasChild
+			FROM
+			    t_app_district a
+			WHERE
+			    district_type = 'PLACE_PROVINCE'
+			AND id = #{districtParentId, jdbcType=VARCHAR}
+		]]>    
+	</select>
+</mapper>

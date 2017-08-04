@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+	"-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hoau.hoauapp.mapper.UserInfoMapper">
+
+	<!-- 根据用户ID查询用户信息 -->
+	<select id="getUserInfo" parameterType="string"
+		resultType="com.hoau.hoauapp.entity.User">
+		<![CDATA[
+			select u.ID,u.BIRTHDATE,u.GENDER,u.MOBILE,u.USERNAME,u.NICKNAME,u.USERINTEGRAL from t_app_userinfo u where u.ID=#{id}
+		]]>
+	</select>
+	
+	
+	<!-- 根据手机或用户ID查询用户信息 -->
+	<select id="findUserInfo" parameterType="string"
+		resultType="com.hoau.hoauapp.entity.User">
+		<![CDATA[
+			select u.ID,u.BIRTHDATE,u.GENDER,u.MOBILE,u.USERNAME,u.NICKNAME,u.USERINTEGRAL from t_app_userinfo u
+		]]>
+		<where>
+			<if test="id!=null and id!=''">
+				and u.ID=#{id}
+			</if>
+			<if test="mobile !=null and mobile !=''">
+				and u.MOBILE =#{mobile}
+			</if>
+			<if test="id==null and mobile ==null">
+				and 1=2
+			</if>
+			<if test="id=='' and mobile ==''">
+				and 1=2
+			</if>
+			
+		</where>
+	</select>
+	
+	
+	
+	
+	<!-- 新增用户信息 -->
+	<insert id="createUserInfo" parameterType="com.hoau.hoauapp.entity.User">
+		<![CDATA[
+			INSERT INTO t_app_userinfo(ID,MOBILE,BIRTHDATE,GENDER,USERNAME,NICKNAME) 
+			VALUES(#{id},#{mobile},#{birthdate},#{gender},#{username},#{nickname})
+		]]>
+	</insert>
+	
+	<!-- 根据用ID修改用户信息 -->
+	<update id="modifyUserInfo" parameterType="com.hoau.hoauapp.entity.User">
+		<![CDATA[
+			UPDATE t_app_userinfo set BIRTHDATE=#{birthdate},GENDER=#{gender},NICKNAME=#{nickname} WHERE ID = #{id}
+		]]>
+	</update>
+	
+	<!-- 修改用户积分 -->
+	<update id="updateUserIntegral" parameterType="com.hoau.hoauapp.vo.IntegralInfoVo">
+		<![CDATA[
+			UPDATE t_app_userinfo SET USERINTEGRAL = (IFNULL(USERINTEGRAL, 0) + #{integral}) WHERE ID = #{userId}
+		]]>
+	</update>
+	
+	<!-- 优惠券查询 -->
+    <select id="queryCouponClipping" resultType="com.hoau.hoauapp.vo.CouponClippingVo">
+		<![CDATA[
+			select id, amount, integral from t_app_couponclipping where dr = '1' order by amount asc
+		]]>
+	</select>
+	
+	<!-- 根据ID查询优惠券 -->
+    <select id="queryCouponClippingById" resultType="com.hoau.hoauapp.vo.CouponClippingVo" parameterType="int">
+		<![CDATA[
+			select id, amount, integral from t_app_couponclipping where dr = '1' and id = #{id};
+		]]>
+	</select>
+	
+	<!-- 新增优惠券信息 -->
+	<insert id="exchangeCC" parameterType="com.hoau.hoauapp.vo.UserCouponClippingVo">
+		<![CDATA[
+			INSERT INTO t_app_user_couponclipping(USERID,CCID,AMOUNT,INTEGRAL,CCORDER,CCSTATUS,DEADLINE,CREATEDATE,DR) 
+			VALUES(#{userId},#{ccId},#{amount},#{integral},#{ccOrder},'1',#{deadLine},SYSDATE(),'1')
+		]]>
+	</insert>
+	
+	<!-- 查询优惠券信息 -->
+	<select id="getCCInfo" parameterType="com.hoau.hoauapp.entity.User" resultType="com.hoau.hoauapp.vo.UserCouponClippingVo">
+		<![CDATA[
+			select
+			ID, 
+			CCID ccId,
+			USERID userId,
+			AMOUNT amount,
+			INTEGRAL integral,
+			CCORDER ccOrder,
+			CCSTATUS ccStatus,
+			DEADLINE deadLine,
+			CREATEDATE createDate
+			 from t_app_user_couponclipping where dr = '1' and USERID = #{id}
+			order by createdate desc
+		]]>
+	</select>
+	
+	<!-- 查询未使用未过期优惠券信息 -->
+	<select id="getUnUserCCInfo" parameterType="com.hoau.hoauapp.entity.User" resultType="com.hoau.hoauapp.vo.UserCouponClippingVo">
+		<![CDATA[
+			select
+			ID, 
+			CCID ccId,
+			USERID userId,
+			AMOUNT amount,
+			INTEGRAL integral,
+			CCORDER ccOrder,
+			CCSTATUS ccStatus,
+			DEADLINE deadLine,
+			CREATEDATE createDate
+			 from t_app_user_couponclipping where dr = '1' 
+			                 and USERID = #{id} 
+			                 and CCSTATUS='1' 
+			                 and DATEDIFF(DATE_FORMAT(DEADLINE, '%Y-%m-%d'), SYSDATE()) >= 0
+			order by createdate desc
+		]]>
+	</select>
+	
+	<!-- 查询未使用优惠券信息 -->
+	<select id="getUnUseCCCount" parameterType="com.hoau.hoauapp.entity.User" resultType="int">
+		<![CDATA[
+			SELECT
+				COUNT(1)
+			FROM
+				t_app_user_couponclipping c
+			WHERE
+				c.USERID = #{id}
+			AND c.CCSTATUS = '1'
+			AND c.dr = '1'
+			AND DATEDIFF(DATE_FORMAT(c.DEADLINE, '%Y-%m-%d'), SYSDATE()) >= 0
+		]]>
+	</select>
+</mapper>

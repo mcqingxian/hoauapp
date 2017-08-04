@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+	"-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hoau.hoauapp.si.gis.gismapper.GisCompanyMapper">
+	<select id="queryGisCompanys" resultType="com.hoau.hoauapp.entity.GisCompanyEntity">
+	   <![CDATA[
+  	    	SELECT DISTINCT
+			    code,
+			    name,
+			    address,
+			    lat,
+			    lng,
+			    linkman,
+			    phone
+			FROM
+			    ips_station
+			WHERE
+			    used = 1
+			AND maptype = 2913
+  	    ]]>
+	</select>
+</mapper>

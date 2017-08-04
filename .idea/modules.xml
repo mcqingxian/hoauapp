@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/hoauapp.iml" filepath="$PROJECT_DIR$/.idea/hoauapp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/hoauapp_core/hoauapp_core.iml" filepath="$PROJECT_DIR$/hoauapp_core/hoauapp_core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/hoauapp_si/hoauapp_si.iml" filepath="$PROJECT_DIR$/hoauapp_si/hoauapp_si.iml" />
+      <module fileurl="file://$PROJECT_DIR$/hoauapp_web/hoauapp_web.iml" filepath="$PROJECT_DIR$/hoauapp_web/hoauapp_web.iml" />
+    </modules>
+  </component>
+</project>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+	"-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hoau.hoauapp.mapper.NewFeedbackMapper">
+
+	<!-- 保存用户反馈信息 -->
+	<select id="addNewFeedback" parameterType="com.hoau.hoauapp.vo.NewFeedbackVo">
+		<![CDATA[
+		insert into t_app_newfeedback ( feedbacktype,theme,waybill,feedbackmsg,username,contactway,userid,submitdate) 
+		values (#{feedbacktype},#{theme},#{waybill},#{feedbackmsg},#{username},#{contactway},#{userid},SYSDATE())
+			
+		]]>
+	</select>
+	
+</mapper>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+	"-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hoau.hoauapp.mapper.GisCompanySyncMapper">
+	<delete id="clearGisCompany">
+  	    <![CDATA[
+  	    	delete from t_app_company_gis
+  	    ]]>
+	</delete>
+	<insert id="saveGisCompany" parameterType="java.util.List">
+  	     <![CDATA[
+			insert  into  t_app_company_gis(
+				code, 
+				name,
+				address, 
+				lat,
+				lng,
+				linkman,
+				phone) 
+			values
+		 ]]>
+		<foreach collection="list" item="item" index="index"
+			separator=",">
+			<![CDATA[
+			(#{item.code,jdbcType=VARCHAR},
+			 #{item.name,jdbcType=VARCHAR},
+			 #{item.address,jdbcType=VARCHAR},
+			 #{item.lat,jdbcType=NUMERIC},
+			 #{item.lng,jdbcType=NUMERIC},
+			 #{item.linkman,jdbcType=VARCHAR},
+			 #{item.phone,jdbcType=VARCHAR})
+			]]>
+		</foreach>
+	</insert>
+</mapper>

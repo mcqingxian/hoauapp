@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+	"-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hoau.hoauapp.mapper.VersionUpdateMapper">
+
+	<!-- 获取版本信息 -->
+	<select id="getVersionInfo" parameterType="com.hoau.hoauapp.vo.VersionUpdateInfoVo" resultType="com.hoau.hoauapp.vo.VersionUpdateInfoVo">
+		<![CDATA[
+			SELECT ID, VERSIONCODE, APKNAME, ISMUST, URL, USERHEADURL, DESCRIPTION, CREATEDATE FROM T_APP_VERSION WHERE ISNOW = '1' and apptype=#{apptype}
+		]]>
+	</select>
+	
+	<insert id="addVersionInfo" parameterType="com.hoau.hoauapp.vo.VersionUpdateSubInfoVo">
+		<![CDATA[
+			INSERT INTO T_APP_VERSION( VERSIONCODE, APKNAME, ISMUST, URL, USERHEADURL, DESCRIPTION,ISNOW, CREATEDATE )
+			VALUES(#{versionCode},#{apkName}, #{isMust}, #{url}, 'http://hma.hoau.net:8180/resources/head', #{description}, '1',SYSDATE())
+		]]>
+	</insert>
+	
+	<update id="updateToHistory" parameterType="com.hoau.hoauapp.vo.VersionUpdateSubInfoVo">
+		<![CDATA[
+			UPDATE T_APP_VERSION SET ISNOW='2' WHERE ISNOW = '1' and apptype=#{apptype}
+		]]>
+	</update>
+	
+	<select id="getCount" parameterType="com.hoau.hoauapp.vo.VersionUpdateSubInfoVo" resultType="long">
+		<![CDATA[
+			select COUNT(ID) from T_APP_VERSION 
+		]]>
+	</select>
+	<select id="findVersionsList" parameterType="java.util.Map" resultType="com.hoau.hoauapp.vo.VersionUpdateSubInfoVo">
+		<![CDATA[
+			SELECT ID, VERSIONCODE, APKNAME, ISMUST, URL, USERHEADURL, DESCRIPTION, CREATEDATE ,ISNOW
+            FROM T_APP_VERSION  ORDER BY ID DESC LIMIT #{start}, #{limit}
+		]]>
+	</select>
+	
+	
+</mapper>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+	"-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hoau.hoauapp.mapper.ServiceEvaluateMapper">
+
+	<!-- 用户评价 update huyuzhou 加了一个detailevaluate字段 -->
+	<insert id="insertEvaluate" parameterType="map">
+		<![CDATA[
+		INSERT INTO 
+		
+		t_app_serviceevaluate
+		 
+		(userid,orderno,allserviceevaluat,serviceevaluat,timeevaluat,advise,evaluatetype,detailevaluate)
+		
+		values
+		
+		(#{userid},#{orderno},#{allserviceevaluat},#{serviceevaluat},#{timeevaluat},#{advise},#{evaluatetype},#{detailevaluate})
+		]]>
+	</insert>
+	<!-- update huyuzhou 加了一个detailevaluate字段 -->
+	<select id="selectEvaluate" resultType="com.hoau.hoauapp.vo.ServiceEvaluateVo">
+		<![CDATA[
+		select orderno,allserviceevaluat,allserviceevaluat,detailevaluate from
+		
+		t_app_serviceevaluate a where a.userid=#{0} and a.evaluatetype = #{1}
+		 
+		]]>
+	</select>
+
+</mapper>

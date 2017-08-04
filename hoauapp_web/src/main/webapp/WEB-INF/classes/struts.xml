@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+"http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<constant name="struts.multipart.maxSize" value="20971520" />
+	<package name="hoauapp" namespace="/" extends="json-default">
+		<interceptors>
+			<interceptor-stack name="hoauappStack">
+				<interceptor-ref name="json" />
+				<interceptor-ref name="defaultStack" />
+			</interceptor-stack>
+		</interceptors>
+		<default-interceptor-ref name="hoauappStack" />
+		
+		<!-- APP版本信息添加 -->
+<!-- 		<action name="fileupload" class="com.hoau.hoauapp.control.APKUploadAction" method="apkUpload">   -->
+
+<!-- 	        <result type="json">   -->
+<!-- 	            <param name="contentType">text/html;charset=utf-8</param>   -->
+<!-- 	                <param name="includeProperties">   -->
+<!-- 	                       success,resultMsg   -->
+<!-- 	                 </param>        -->
+<!-- 	        </result>   -->
+<!--         </action>  -->
+
+
+        <!-- APP版本信息查询 -->
+<!--         <action name="findversions" class="com.hoau.hoauapp.control.APKUploadAction" method="findVersions">  	         -->
+<!-- 	        <result type="json">   -->
+ 
+<!--             </result>   -->
+<!--         </action>  -->
+
+
+
+        
+        <!-- APP主页广告资源信息添加 -->
+<!--         <action name="sliderfileupload" class="com.hoau.hoauapp.control.SliderManageAction" method="addSliderFile">   -->
+
+<!-- 	        <result type="json">   -->
+<!-- 	            <param name="contentType">text/html;charset=utf-8</param>   -->
+<!-- 	                <param name="includeProperties">   -->
+<!-- 	                       success,resultMsg   -->
+<!-- 	                 </param>        -->
+<!-- 	        </result>   -->
+<!--         </action>  -->
+
+
+
+        <!-- APP主页广告资源信息查询 -->
+<!--         <action name="findslider" class="com.hoau.hoauapp.control.SliderManageAction" method="findSlider">  	         -->
+<!-- 	        <result type="json">   -->
+ 
+<!--             </result>   -->
+<!--         </action>  -->
+		
+		<action name="mytestAction" class="com.hoau.hoauapp.control.MytestAction">
+			 <result name="success" type="json"/>  
+		</action>
+	</package>
+</struts>

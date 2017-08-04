@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+	"-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hoau.hoauapp.mapper.CompanySyncMapper">
+	<delete id="clearCompany">
+  	    <![CDATA[
+  	    	delete from t_app_company
+  	    ]]>
+	</delete>
+	<insert id="saveCompany" parameterType="java.util.List">
+  	     <![CDATA[
+			insert into  t_app_company(
+				company_code, 
+				company_name,
+				company_name_detail, 
+				province, 
+				city,
+				region, 
+				area_code, 
+				address_detail, 
+				phone, 
+				is_specified_time, 
+				delivery_depend, 
+				take_self_depend, 
+				active) 
+			values
+		 ]]>
+		<foreach collection="list" item="item" index="index"
+			separator=",">
+			<![CDATA[
+			(#{item.companyCode,jdbcType=VARCHAR},
+			 #{item.companyName,jdbcType=VARCHAR},
+			 #{item.companyNameDetail,jdbcType=VARCHAR},
+			 #{item.province,jdbcType=VARCHAR},
+			 #{item.city,jdbcType=VARCHAR},
+			 #{item.region,jdbcType=VARCHAR},
+			 #{item.areaCode,jdbcType=VARCHAR},
+			 #{item.addressDetail,jdbcType=VARCHAR},
+			 #{item.phone,jdbcType=VARCHAR},
+			 #{item.isSpecifiedTime,jdbcType=VARCHAR},
+			 #{item.deliveryDepend,jdbcType=VARCHAR},
+			 #{item.takeSelfDepend,jdbcType=VARCHAR},
+			 #{item.active,jdbcType=VARCHAR})
+			]]>
+		</foreach>
+	</insert>
+</mapper>

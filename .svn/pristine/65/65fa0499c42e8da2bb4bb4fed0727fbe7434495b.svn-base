@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+	"-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hoau.hoauapp.mapper.JobSyncMapper">
+  	<insert id="saveJobLog" parameterType="map">
+  	    <![CDATA[
+			INSERT
+			INTO
+			    t_app_job_log
+			    (
+			        job_name,
+			        job_status,
+			        error_log
+			    )
+			    VALUES
+			    (
+			        #{jobName,jdbcType=VARCHAR},
+			        #{status, jdbcType=VARCHAR},
+			        #{message, jdbcType=VARCHAR}
+			    )  
+		  ]]>
+  	</insert>
+  	 <!-- Mysql 无 for update nowait 方法，改用设置当前session lock_wait_time值来达到for update nowait效果-->
+  	<update id="setSessionLockWaitTimeout">
+  	    <![CDATA[
+  	    	 set session innodb_lock_wait_timeout=1
+  	    ]]>
+  	</update>
+  	<!-- Job 添加悲观锁 -->
+  	<select id="forUpdateJobLock" parameterType="string" resultType="int">
+		  <![CDATA[
+		  	 SELECT
+			     COUNT(1)
+			 FROM
+			     t_app_job
+			 WHERE
+			     job_name = #{jobName,jdbcType=VARCHAR} 
+			 FOR UPDATE
+		   ]]>    
+  	</select>
+  	
+  	<insert id="saveJob" parameterType="string">
+  	    <![CDATA[
+  	    	INSERT
+			INTO
+			    t_app_job
+			    (
+			        job_name,
+			        create_time
+			    )
+			    VALUES
+			    (
+			        #{jobName,jdbcType=VARCHAR},
+			        sysdate()
+			    )
+  	    ]]>
+  	</insert>
+</mapper>

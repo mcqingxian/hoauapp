@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+	"-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hoau.hoauapp.mapper.NearDeptsMapper">
+
+	<select id="queryNearDeptsByLnglat"  parameterType="map"
+		resultType="com.hoau.hoauapp.vo.CompanyVo">
+		<![CDATA[
+			SELECT
+			    c.company_code        AS companyCode,
+			    c.company_name        AS companyName,
+			    c.company_name_detail AS companyNameDetail,
+			    c.address_detail      AS addressDetail,
+			    g.lat                 AS lat,
+			    g.lng                 AS lng,
+			    CONCAT(c.area_code,'-',c.phone)               AS phone,
+			    c.is_specified_time   AS isSpecifiedTime,
+			    1                     AS isDepart,
+			    CASE
+			        WHEN c.take_self_depend IS NULL
+			        OR  c.take_self_depend = ''
+			        THEN 1
+			        ELSE 0
+			    END AS isTakeSelf,
+			    CASE
+			        WHEN c.delivery_depend IS NULL
+			        OR  c.delivery_depend = ''
+			        THEN 1
+			        ELSE 0
+			    END AS isDeliver
+			FROM
+			    t_app_company_gis g
+			INNER JOIN
+			    t_app_company c
+			ON
+			    g.CODE = c.company_name
+			ORDER BY
+			    lat_lng_distance(g.lat,g.lng,#{lat,jdbcType=NUMERIC},#{lng,jdbcType=NUMERIC})
+			limit #{size,jdbcType=NUMERIC}
+		]]>
+	</select>
+</mapper>

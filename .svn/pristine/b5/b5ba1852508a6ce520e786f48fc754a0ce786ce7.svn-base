@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+	"-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hoau.hoauapp.mapper.ResourceMapper">
+
+	<insert id="addResource" parameterType="com.hoau.hoauapp.vo.ResBaseVo">
+		<![CDATA[
+			INSERT INTO t_app_resource (resource_version,resource_type,create_time)
+			VALUES (#{resourceversion},#{resourcetype},SYSDATE())
+		]]>
+
+	</insert>
+	
+	<insert id="addSlider" parameterType="com.hoau.hoauapp.vo.SlideShow">
+		<![CDATA[
+			INSERT INTO t_app_slider (resource_version,title,image_url,link,create_time)
+			VALUES (#{version},#{title},#{imageUrl},#{link},SYSDATE())
+		]]>
+	</insert>
+<!-- 查询资源明细总数 -->
+   <select id="getCount" parameterType="java.util.Map" resultType="long" >
+ 		<![CDATA[
+ 			select count(id) from t_app_slider
+ 		]]>
+   </select>
+<!-- 查询资源明细 -->
+	<select id="findSlide" parameterType="java.util.Map" resultType="com.hoau.hoauapp.vo.SlideShow" >
+ 		<![CDATA[
+ 			SELECT
+			   title as title,
+			   image_url as imageUrl,
+			   resource_version as version,
+			   create_time as createtime,
+			   ID as id,
+			   link as link
+			FROM
+			    t_app_slider 
+			ORDER BY ID DESC   LIMIT #{start}, #{limit}   
+			    
+ 		]]>
+   </select>
+
+   <select id="queryMaxVersionByType" parameterType="map" resultType="int">
+       <![CDATA[
+       		SELECT
+			    max(resource_version)
+			FROM
+			    t_app_resource
+			WHERE
+			    resource_type = #{resourceType,jdbcType=VARCHAR}
+       ]]>
+   </select>
+   
+   <select id="querySlidersByVersion" parameterType="int" resultType="com.hoau.hoauapp.vo.SlideShow">
+      <![CDATA[ 
+      		SELECT
+			   title as title,
+			   image_url as imageUrl,
+			   resource_version as version,
+			   create_time as createtime,
+			   id as id,
+			   link as link
+			FROM
+			    t_app_slider
+			WHERE
+			    resource_version =  #{version,jdbcType=NUMERIC}
+      ]]>
+   </select>
+   
+   <select id="queryProduceIntroduceByVersion" parameterType="int" resultType="com.hoau.hoauapp.vo.ProduceIntroduceVo">
+      <![CDATA[ 
+      		SELECT
+			   title as title,
+			   image_url as imageUrl,
+			   link as link
+			FROM
+			    t_app_product_introduce
+			WHERE
+			    resource_version =  #{version,jdbcType=NUMERIC}
+			ORDER BY SORT_NUM
+      ]]>
+   </select>
+   
+   <!-- 数据字典根据键查询值 -->
+   <resultMap type="com.hoau.hoauapp.vo.DictionaryVo" id="dictionaryInfoResultMap">
+   		<id property="id" column="id"/>
+   		<result property="dataValue" column="dataValue"/>
+   		<result property="parentId" column="parentId"/>
+   		<result property="typeId" column="typeId"/>
+   		<result property="remark" column="remark"/>
+   		<collection property="childList" ofType="com.hoau.hoauapp.vo.DictionaryVo" column="parentid">
+   			<id property="id" column="child_id"/>
+   			<result property="dataValue" column="child_dataValue"/>
+	   		<result property="parentId" column="child_parentId"/>
+	   		<result property="typeId" column="child_typeId"/>
+	   		<result property="remark" column="child_remark"/>
+   		</collection>
+   </resultMap>
+   <select id="queryDictionaryInfo" parameterType="com.hoau.hoauapp.vo.DictionaryVo" resultMap="dictionaryInfoResultMap">
+      <![CDATA[ 
+      		SELECT
+			   F.id as id,
+			   F.value as dataValue,
+			   F.parentid as parentId,
+			   F.typeid as typeId,
+			   F.sortnum as sortNum,
+			   F.remark as remark,
+			   C.id as child_id,
+			   C.value as child_dataValue,
+			   C.parentid as child_parentId,
+			   C.typeid as child_typeId,
+			   C.sortnum as child_sortNum,
+			   C.remark as child_remark
+			FROM
+			    t_app_data_dictionary F
+			LEFT JOIN t_app_data_dictionary C
+				ON F.id = C.parentid
+      ]]>
+		<where>
+			<if test="id != null and id != ''">
+				and F.id =  #{id}
+			</if>
+			<if test="parentId != null and parentId != ''">
+				and F.parentid =  #{parentId}
+			</if>
+			<if test="typeId != null and typeId != ''">
+				and F.typeid =  #{typeId}
+			</if>
+		</where>
+		<![CDATA[ 
+			ORDER BY F.sortnum, C.sortnum
+		]]>
+   </select>
+</mapper>

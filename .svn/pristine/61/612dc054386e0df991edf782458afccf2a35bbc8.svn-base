@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+	"-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hoau.hoauapp.mapper.IntegralMapper">
+
+	<!-- 查询积分类型对应的积分 -->
+	<select id="queryIntegral" parameterType="int" resultType="int">
+		<![CDATA[
+			SELECT num FROM t_app_integraltype WHERE itype = #{itype}
+		]]>
+	</select>
+
+	<!-- 用户增加积分 -->
+	<select id="addIntegral" parameterType="com.hoau.hoauapp.vo.IntegralInfoVo">
+		<![CDATA[
+			INSERT INTO t_app_integral(USERID, TYPE, INTEGRAL, DESCRIPTION, CREATEDATE,DAYS, DR) VALUES (#{userId}, #{type}, #{integral}, #{desc}, SYSDATE(),#{days}, 0)
+		]]>
+	</select>
+	
+	<!-- 判断今天是否已经“签到”增加积分 -->
+	<select id="getSignedLists" parameterType="com.hoau.hoauapp.vo.IntegralInfoVo" resultType="int">
+		<![CDATA[
+			SELECT count(1) FROM t_app_integral WHERE Date(CREATEDATE) = date_add(CURDATE(), interval 0 day) and USERID = #{userId}
+		]]>
+	</select>
+
+	<!-- 查询当前签到用户昨天是否也签到 -->
+	<select id="findIntegral" parameterType="map" resultType="com.hoau.hoauapp.vo.IntegralInfoVo">
+	    <![CDATA[
+			SELECT days FROM t_app_integral WHERE date(CREATEDATE)=#{createDate} and USERID = #{userId} and type='1' and dr='0'
+		]]>
+	</select>
+	
+</mapper>

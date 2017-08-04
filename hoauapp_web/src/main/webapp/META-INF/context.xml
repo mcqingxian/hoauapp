@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Context>
+	<WatchedResource>WEB-INF/web.xml</WatchedResource>
+	<Resource name="jdbc/hoauappds" auth="Container" type="javax.sql.DataSource"
+		username="hoauapp" password="hoauapp2#" driverClassName="com.mysql.jdbc.Driver"
+		url="jdbc:mysql://10.39.251.178:3306/hoauapp"
+		maxActive="8" maxIdle="4" />
+	<Resource name="jdbc/gisds" auth="Container" type="javax.sql.DataSource"
+		username="ips_standard" password="skjdfesssd_*4_" driverClassName="com.mysql.jdbc.Driver"
+		url="jdbc:mysql://10.39.60.166:3306/ips_standard"
+		maxActive="4" maxIdle="1" />
+</Context>

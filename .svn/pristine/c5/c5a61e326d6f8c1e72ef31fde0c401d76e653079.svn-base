@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+	"-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hoau.hoauapp.mapper.MessageInfoMapper">
+
+	
+	
+	<!-- 新增货物信息 -->
+	<insert id="createMessage" parameterType="com.hoau.hoauapp.vo.MessageInfoVo">
+		<![CDATA[
+			INSERT INTO t_app_message_goods(USERID,STATUS,RECIPIENTS,ORDERNUM,OPERATIONDATE,ORDERID,MOBILE,CREATEDATE ,ISREAD)
+			VALUES(#{userid},#{status},#{recipients},#{ordernum},#{operationdate},#{orderid},#{mobile},SYSDATE(),'0')
+			
+		]]>
+	</insert>
+	
+	<!-- 新增其他消息 -->
+	<insert id="createMessageOther" parameterType="com.hoau.hoauapp.vo.MessageOtherVo">
+		<![CDATA[
+			INSERT INTO t_app_message_other(TITLE,DETAILS,USERID,CREATEDATE,ISREAD)
+            VALUES(#{title},#{details},#{userid},SYSDATE(),'0')
+		]]>
+	</insert>
+	
+	
+	
+	<!-- 新增百度推送用户ID信息 -->
+	<insert id="createPushUser" parameterType="com.hoau.hoauapp.vo.PushUserVo">
+		<![CDATA[
+			INSERT INTO t_app_pushuser (USERID,BAIDU_USERID,APPID,CHANNELID,CREATEDATE,CANCEL) 
+			VALUES(#{userid},#{baidu_userid},#{appid},#{channelid},SYSDATE(),'0') 
+		]]>
+	</insert>
+	
+	<!-- 根据用户ID查询未读货物消息总数 -->
+	<select id="getMessageCount" parameterType="string"  resultType="long">
+		<![CDATA[
+		   select 
+			count(*)
+		   from t_app_message_goods  WHERE USERID = #{id}
+		   and ISREAD=0
+		   and OPERATIONDATE > date_sub(SYSDATE() ,interval 1 month)
+		  
+		]]>
+	</select>
+	
+	
+	
+	
+	<!-- 根据用户ID查询货物信息 -->
+	<select id="findMessageInfo" parameterType="string"
+		resultType="com.hoau.hoauapp.vo.MessageInfoVo">
+		<![CDATA[
+			select 
+				ID,
+				USERID,
+				STATUS,
+				RECIPIENTS,
+				ORDERNUM,
+				OPERATIONDATE,
+				MOBILE,
+				CREATEDATE,
+				ORDERID,
+				ISREAD 
+		   from t_app_message_goods  WHERE USERID = #{userid}
+		   and OPERATIONDATE > date_sub(SYSDATE() ,interval 1 month)
+		   order by OPERATIONDATE DESC
+		  
+		]]>
+	</select>
+	
+	
+	<!-- 根据用户ID查询其他消息 -->
+	<select id="findMessageOther" parameterType="string"
+		resultType="com.hoau.hoauapp.vo.MessageOtherVo">
+		<![CDATA[
+		    SELECT 
+				ID,
+				TITLE,
+				DETAILS,
+				USERID,
+				CREATEDATE,
+				ISREAD 
+		    FROM t_app_message_other  WHERE USERID =#{userid}
+		    and CREATEDATE > date_sub(SYSDATE() ,interval 1 month)
+		    order by CREATEDATE DESC
+		    
+		]]>
+	</select>
+	
+	<!-- 查询百度推送用户信息 -->
+	<select id="findPushUser" parameterType="string" resultType="com.hoau.hoauapp.vo.PushUserVo">
+		<![CDATA[
+		select 
+			ID,
+			USERID,
+			BAIDU_USERID,
+			CHANNELID,
+			APPID,
+			CREATEDATE,
+			CANCEL,
+			notification_builder_id,
+			notification_basic_style,
+			sound,
+			badge,
+			sendstate,
+			beginhour,
+			endhour
+		from t_app_pushuser 
+		]]>
+		<where>
+			<if test="userid !=null and userid!=''">
+				and USERID =#{userid}
+			</if>
+			<if test="baidu_userid !=null and baidu_userid !=''">
+				and BAIDU_USERID=#{baidu_userid}
+			</if>
+			<if test="cancel==0 or cancel==1">
+				and CANCEL =#{cancel}
+			</if>
+			<if test="userid ==null and baidu_userid==null">and 1=2</if>
+			<if test="userid =='' and baidu_userid==''">and 1=2</if>
+		</where>
+		
+		
+	
+	</select>
+	
+	
+	
+	
+	<!-- 修改货物消息已读 -->
+	<update id="modifyGoodsMsgRead" parameterType="com.hoau.hoauapp.vo.MessageInfoVo" >
+		<![CDATA[
+			UPDATE t_app_message_goods set ISREAD=#{isread} WHERE ID = #{id}
+		]]>
+	</update>
+	<!-- 修改其他消息已读 -->
+	<update id="modifyOherMsgRead" parameterType="com.hoau.hoauapp.vo.MessageOtherVo" >
+		<![CDATA[
+			UPDATE t_app_message_other set ISREAD=#{isread} WHERE ID = #{id}
+		]]>
+	</update>
+	
+	<!-- 用户注销清楚推送用户信息 -->
+	<update id="modifyPushUser" parameterType="com.hoau.hoauapp.vo.PushUserVo">
+		<![CDATA[
+			UPDATE t_app_pushuser SET CANCEL=#{cancel} WHERE ID=#{id}
+		]]>
+	</update>
+	
+	
+	<!-- 推送消息声音设置 -->
+	<update id="modifyPushSound" parameterType="com.hoau.hoauapp.vo.PushUserVo">
+		<![CDATA[
+		UPDATE t_app_pushuser 	
+		SET 
+		notification_basic_style=#{notification_basic_style},
+		sound=#{sound}	
+		WHERE USERID=#{userid} and BAIDU_USERID=#{baidu_userid}
+		
+		]]> 
+	</update>
+	
+	<!-- 推送消息接收设置 -->
+	<update id="modifyPushSendState" parameterType="com.hoau.hoauapp.vo.PushUserVo">
+		<![CDATA[
+		UPDATE t_app_pushuser 	
+		SET
+		sendstate=#{sendstate},
+		beginhour=#{beginhour},
+		endhour=#{endhour}
+		WHERE USERID=#{userid} and BAIDU_USERID=#{baidu_userid}
+		
+		]]> 
+	</update>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+</mapper>

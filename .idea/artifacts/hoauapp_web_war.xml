@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="hoauapp_web:war">
+    <output-path>$PROJECT_DIR$/hoauapp_web/target</output-path>
+    <root id="archive" name="hoauapp.war">
+      <element id="artifact" artifact-name="hoauapp_web:war exploded" />
+    </root>
+  </artifact>
+</component>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+	"-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hoau.hoauapp.mapper.OperateRecordMapper">
+    <!-- 保存操作记录 -->
+	<insert id="saveRecord" parameterType="com.hoau.hoauapp.entity.OperateRecord">
+	    <![CDATA[
+			INSERT
+			INTO
+			    t_app_operate_record
+			    (
+			        OPERATE_TIME,
+			        URI,
+			        REQUEST_METHOD
+			    )
+			    VALUES
+			    (
+			    	sysdate(),
+			        #{uri,jdbcType=VARCHAR},
+			        #{requestMethod,jdbcType=VARCHAR}
+			    )	    	
+	    ]]>
+	</insert>
+</mapper>
